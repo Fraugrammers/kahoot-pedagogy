@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery: async (arg, api, extraOptions) => {
-        const baseQuery = fetchBaseQuery({ baseUrl: 'http://localhost:5000' });
+        const baseQuery = fetchBaseQuery({ baseUrl: 'http://localhost:5000/api' });
         try {
             const result: any = await baseQuery(arg, api, extraOptions);
             if (result && result.error && result.error.data.errorMessage) {

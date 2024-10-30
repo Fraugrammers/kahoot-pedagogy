@@ -1,15 +1,28 @@
 import { apiSlice } from "./mainApi";
-import { Lobby } from "./interfaces";
+import { Lobby, Player } from "../interfaces";
 
-export const manualApiSlice = apiSlice.injectEndpoints({
+interface PlayerRequest {
+    lobbyCode: number;
+    username: Player["username"];
+}
+
+export const lobbyApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        getOrganization: builder.query<Lobby, string>({
-            query: (lobbyId) => `/api/lobby?id=${lobbyId}`,
+        getLobby: builder.query<Lobby, string>({
+            query: (lobbyId) => `/lobby/${lobbyId}`,
             providesTags: [{ type: "lobbies", id: "LOB_LIST" }],
         }),
         createLobby: builder.mutation<Lobby, Partial<Lobby>>({
             query: (initialReq) => ({
-                url: '/api/lobby/create',
+                url: '/lobby/create',
+                method: 'POST',
+                body: initialReq,
+            }),
+            invalidatesTags: [{ type: "lobbies", id: "LOB_LIST" }],
+        }),
+        addPlayer: builder.mutation<Lobby, PlayerRequest>({
+            query: (initialReq) => ({
+                url: '/lobby/player/add',
                 method: 'POST',
                 body: initialReq,
             }),
@@ -18,4 +31,4 @@ export const manualApiSlice = apiSlice.injectEndpoints({
     })
 })
 
-export const {useCreateLobbyMutation, useGetOrganizationQuery} = manualApiSlice;
+export const {useCreateLobbyMutation, useGetLobbyQuery, useAddPlayerMutation} = lobbyApiSlice;

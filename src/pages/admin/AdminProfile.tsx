@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Button, TextInput, Textarea } from 'flowbite-react';
+import { useNavigate } from 'react-router-dom';
+
 import { useCreateLobbyMutation } from '@/store/api/lobbyApi';
 import NotificationToast from '@/components/ui/NotificationToast';
 
 const AdminPage: React.FC = () => {
+    const navigate = useNavigate();
     const [createLobby, { isLoading, isSuccess }] = useCreateLobbyMutation();
     const [showForm, setShowForm] = useState(false);
     const [title, setTitle] = useState('');
@@ -16,14 +19,13 @@ const AdminPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Call the createLobby mutation with title and description
-        await createLobby({ title, description });
+        const result = await createLobby({ title, description }).unwrap();
+        navigate(`/lobby/${result._id}`);
         setShowToast(true);
     };
 
     useEffect(() => {
         if (isSuccess) {
-            // Automatically close the toast after a few seconds
             const timer = setTimeout(() => {
                 setShowToast(false);
             }, 4000);
@@ -50,7 +52,11 @@ const AdminPage: React.FC = () => {
                         required
                         className='mb-4'
                     />
-                    <Button type='submit' color='success' isProcessing={isLoading}>
+                    <Button 
+                        type='submit' 
+                        color='success' 
+                        isProcessing={isLoading}
+                    >
                         Create Lobby
                     </Button>
                 </form>
